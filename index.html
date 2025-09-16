@@ -8,125 +8,193 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: "Courier New", monospace;
-      background: linear-gradient(to right, #141e30, #243b55);
-      color: #fff;
+      min-height: 100vh;
+      overflow-y: auto; /* bisa scroll */
       display: flex;
       justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      text-align: left;
-      overflow-x: hidden;
+      align-items: flex-start; /* teks mulai dari atas */
+      background: black;
+      color: white;
+      font-family: 'Courier New', monospace;
     }
 
-    .container {
-      max-width: 800px;
-      padding: 20px;
-      font-size: 1.2em;
+    /* Background bintang */
+    #stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: black;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Kontainer teks */
+    .content {
+      width: 90%;
+      max-width: 600px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      word-break: break-word;
+      font-size: 16px;
       line-height: 1.6;
-      white-space: pre-line;
+      text-align: left;
+      margin-top: 30px;
+      margin-bottom: 50px;
     }
 
     h1 {
       text-align: center;
-      font-size: 2em;
-      margin-bottom: 30px;
-      color: #f7d794;
-      letter-spacing: 2px;
+      margin-bottom: 20px;
+      font-size: 24px;
     }
 
-    .line {
-      margin: 15px 0;
-      border-right: 2px solid #f7d794;
-      display: inline-block;
-      white-space: nowrap;
+    .typing {
+      border-right: .1em solid #fff;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      word-break: break-word;
+      overflow-wrap: break-word;
       overflow: hidden;
+    }
+
+    /* Tombol musik */
+    #music-btn {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid white;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      color: white;
+      font-size: 22px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 10;
+    }
+    #music-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    audio {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>First Impression</h1>
-    <div id="story"></div>
-  </div>
+  <div id="stars"></div>
 
+  <!-- Musik -->
   <audio id="bg-music" autoplay loop>
     <source src="lagu.mp3" type="audio/mpeg">
   </audio>
 
+  <!-- Tombol kontrol musik -->
+  <div id="music-btn">▶️</div>
+
+  <div class="content">
+    <h1>First Impression</h1>
+    <div id="typing" class="typing"></div>
+  </div>
+
   <script>
-    const lines = [
-      "“Alifia Azahra Nabila”",
-      "Ngomongin first impression ketemu Alifia Azahra Nabila, gua masih inget waktu itu gua masuk shift malem.",
-      "Seperti biasa, begitu buka pintu toko, gua secara ga langsung selalu nengok ke arah kasir buat sekedar melihat temen gua yang shift siang.",
-      "Tapi waktu itu ada yg beda...",
-      "Dari balik kasir ada seonggok manusia yang ga gua kenalin mukanya, dan sekilas dalam benak gua 'owh perbantuan mungkin😮'.",
-      "Singkat cerita gua udh siap buat pergantian shift, dan dari sedikit yang gua perhatiin, si 'anak baru' ini tampangnya kayak bocah, baby face mungkin sebutannya.",
-      "Ga perlu waktu lama buat gua tau nama dia siapa. Alifia Azahra Nabila.",
-      "Satu hal yg gua salut di awal itu ketika gua perhatiin, dia cukup cepet buat bergaul sama anak toko...",
-      "Ga sungkan bertanya duluan, karna banyak anak baru terutama baru lulus yang masih jaim ketika baru kenal lingkungan baru.",
-      "Lambat laun waktu berjalan, Alifia makin akrab sama sekitarnya.",
-      "Perlu gua akuin, emang dia punya aura tersendiri yang bikin orang sekitarnya mudah akrab sama dia.",
-      "Sifatnya ceria, aktif, basa basi nya pun ada aja... mungkin bisa dibilang Genit?🤔 Ganjen?😑 Ntah lah...",
-      "Hingga dari sikapnya itu, ga sedikit orang yang mulai 'nge deketin'...",
-      "Ada yang nawarin antar jemput, beliin sarapan tiap pagi, bahkan ngasih kue ulang tahun anonimus 😬.",
-      "Dia pernah heran kenapa mereka kayak gitu, padahal dia anggap mereka sebagai 'Abang'.",
-      "Dan gua cuma bisa bilang kalau itu wajar🙂‍↕️.",
-      "Bagi gua sendiri pun, ke 'Ganjenan' lu itu cukup terasa buat gua😮‍💨...",
-      "Sampai ketika pernah gua ngerasa lu tiba-tiba berubah total😌.",
-      "Sikap lu ke gua jadi kaya jauhin gua, ga liat ada gua, beda banget lah.",
-      "Selama 2 minggu gua berasa didiemin☹️...",
-      "Gua ngecek apakah ada kata gua yang salah, tapi gua ga berani nanya langsung.",
-      "Sampe hari SO Grand, tiba-tiba lu negur gua lagi😮...",
-      "Nawarin gua bikin mie juga apa ngga🥲.",
-      "Disitu gua ngerasa lega😩, walau gua ga pernah nanya soal perubahan itu.",
-      "Singkat cerita semuanya kembali normal 😇...",
-      "Sampai akhirnya gua mutusin buat resign.",
-      "Gua ga suka ditinggal, jadi gua keluar duluan.",
-      "Dan yaa, akhirnya satu persatu juga resign, semua jalanin hidup masing-masing.",
-      "Semoga semua temen gua bisa capai apa yang diinginkan🥹.",
-      "Dan buat lu Alifia... gua harap lu bisa jaga diri.",
-      "Ga gampang ketipu sama orang lain terutama laki-laki.",
-      "Waktu di toko gua sempet mikir, takutnya ada orang yang obses sama lu.",
-      "Tapi gua yakin lu bisa bedain mana yang 'Kadal' mana yang kaga.",
-      "Dan ya, sekarang lu udah mau wisuda...",
-      "Selamat buat lu Lip 🎓.",
-      "Semoga kedepannya lu selalu dapet yang terbaik.",
-      "Tapi inget, kadang yang terbaik belum tentu yang lu mau.",
-      "Tetep jadi diri sendiri, terima hidup lu apa adanya.",
-      "Selesai………",
-      "Kelanjutan season 2 belum ada pengumuman nya.",
-      "Wardian Maulana Yusup"
-    ];
-
-    const container = document.getElementById("story");
-
-    let lineIndex = 0;
-    let charIndex = 0;
-
-    function typeLine() {
-      if (lineIndex < lines.length) {
-        if (charIndex === 0) {
-          const p = document.createElement("p");
-          p.classList.add("line");
-          container.appendChild(p);
-        }
-
-        const currentLine = container.lastChild;
-        currentLine.textContent += lines[lineIndex][charIndex];
-        charIndex++;
-
-        if (charIndex < lines[lineIndex].length) {
-          setTimeout(typeLine, 40); // kecepatan ketik huruf (ms)
-        } else {
-          charIndex = 0;
-          lineIndex++;
-          setTimeout(typeLine, 800); // jeda antar baris (ms)
-        }
-      }
+    // Bikin bintang random
+    const starContainer = document.getElementById("stars");
+    for (let i = 0; i < 150; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+      star.style.top = Math.random() * 100 + "%";
+      star.style.left = Math.random() * 100 + "%";
+      star.style.animationDuration = (1 + Math.random() * 2) + "s";
+      starContainer.appendChild(star);
     }
 
-    typeLine();
+    // Isi cerpen
+    const text = `“Alifia Azahra Nabila”
+Ngomongin first impression ketemu Alifia Azahra Nabila, gua masih inget waktu itu gua masuk shift malem. 
+Seperti biasa, begitu buka pintu toko, gua secara ga langsung selalu nengok ke arah kasir buat sekedar melihat temen gua yang shift siang.
+Tapi waktu itu ada yg beda, dari balik kasir ada seonggok manusia yang ga gua kenalin muka nya, dan sekilas dalam benak gua “owh perbantuan mungkin😮”.
+Singkat cerita gua udh siap buat pergantian shift, dan dari sedikit yang gua perhatiin, si “anak baru” ini tampangnya kayak bocah, baby face mungkin sebutannya.
+Ga perlu waktu lama buat gua tau nama dia siapa. Alifia Azahra Nabila
+Satu hal yg gua salut di awal itu ketika gua perhatiin, dia cukup cepet buat bergaul sama anak toko, ga sungkan bertanya duluan, karna banyak anak baru terutama baru lulus yang masih jaim ketika baru kenal lingkungan baru.
+Lambat laun waktu berjalan, Alifia mulai makin akrab sama sekitarnya, dan perlu gua akuin emg dia punya aura tersendiri yang bikin orang sekitarnya mudah akrab sama dia.
+Mungkin karna sifat yang dia kasih keorang lain, kesan nya selalu ceria, aktif, basa basi nya pun ada aja, mungkin bisa dibilang Genit?🤔 Ganjen?😑 Ntah lah lgi pula toh namanya juga perempuan😏.
+Hingga dari sikapnya itu, ga sedikit orang yang mulai “nge deketin”, menurut gua itu wajar, melihat dari mereka yang ngedeketin udah di usia yang perlu mempertanyakan soal hubungan.
+Ada yang nawarin diri antar jemput lah, beliin sarapan setiap pagi, bahkan ngasih kue ulang tahun yang kesan nya anonimus 😬.
+Gua masih inget dia pernah punya pertanyaan, lebih tepatnya heran kenapa mereka seperti itu, padahal dia anggap mereka sebagai “Abang”.
+Dan ya gua cuma bisa ngejelasin sekali lagi kalo itu wajar🙂‍↕️, karna di umur mereka yang bisa dibilang udah waktunya mikir soal hubungan, mungkin udah sulit buat dapat interaksi sama lawan jenis sampai akrab seperti itu.
+Sehingga ketika dapat perlakuan dari lu “Alifia Azahra Nabila” yang orangnya memang mudah bergaul, mereka anggap itu hal yang tak biasa dan spesial.
+Bahkan bagi gua sendiri pun, ke “Ganjenan” lu itu cukup terasa buat gua😮‍💨, yah mungkin karna guanya juga sebelumnya gapernah ketemu ama yang begitu kali ya, jadi gua ngerasa kayak “Apanih maksudnya”🙄. Tapi ya selama itu bukan hal yang negatif gua ga permasalahin juga😪.
+Sampai ketika pernah gua ngerasa lu tiba tiba berubah total😌,sikap lu ke gua ntah kerasa kaya jauhin gua, ga liat ada gua, ya intinya beda banget lah, dari Alifia yang ceria, suka nge gombal absurd itu tiba tiba berubah jdi kaya orang ga kenal😔.
+Kalau memang dari awal sikapnya cuek atau bagaimana pasti ga akan kelihatan bedanya🧐, tapi karna dari awal lu bukan orang yang cuek, dingin dll, begitu ada perubahan sikap, semuanya langsung terasa bedanya.
+Gua masih inget selama 2 minggu gua berasa didiemin☹️, anak toko yang lain tetep normal ama gua biasa aja tpi lu kayak diemin gua. Gua selalu ngecek lagi apakah ada kata kata gua yang salah, atau sikap gua yang ga lu suka atau apapun itu🙄.
+Dan emang gua akuin gua gapernah nanya soal itu, karna gua juga gamau ke GR an😌. Tapi gua yakin emg waktu itu lu lgi ga baik baik aja, itu yg gua rasain.
+Sampe ketemu hari SO Grand, semuanya berjalan kayak biasa, lu pun juga masih dengan sikap yang sama, hingga ketika istirahat sejenak, gua inget ntah ada angin apa lu negur gua lagi😮, lu nawarin gua apa gua mau bikin mie juga apa ngga🥲.
+Dan disitu gua mulai ngerasa lega😩, tapi tetep gua ga pertanyain soal kenapa sebelumnya sikap lu seakan berubah. Gua ga minta lu buat pertahanin sikap awal lu itu buat gua, hanya saja dari perubahan itu gua jdi selalu ngerasa kalo ada yang salah dari gua, ntah apa itu.
+Singkat cerita semua nya kembali normal 😇, walaupun gua ngerasa intensitas komunikasi lu ama gua sedikit berkurang, yahh gimanapun juga gua ga bisa permasalahin soal itu, toh gua ama yang lain juga sama ko begitu😅.
+Sampai akhirnya karna ada satu hal gua mutusin buat resign, di satu sisi memang karna kebijakan toko yang buat gua ga nyaman, disisi lain gua tau kalau temen gua yang tersisa pun akan resign🥲.
+Gua paling ga suka ditinggal, jadi akhirnya gua resign duluan, mau disuruh tunggu THR kek apa kek, gua mau keluar.
+Dan yaa, akhirnya satu persatu juga resign, semua jalanin hidup masing masing, cuma satu yang gua harap.
+Semoga semua temen gua bisa capai apa yang diinginkan🥹
+Dan buat lu Alifia, begitu gua tau lu keterima kuliah di Kalimantan sana, gua harap lu bisa jaga diri, ga gampang ketipu sama orang lain terutama laki laki, melihat sikap lu yang emang mudah bergaul dan bikin orang lain seneng sama lu dan dari pengalaman lu di toko soal beberapa laki laki yang obses sama lu. 
+Karna waktu masih di toko, gua sempet mikir dan khawatir “nih anak bisa jaga diri ga ya😓” takutnya ketemu orang yang terbuai ama sikap lu, obses sama lu, tapi begitu ga dapet apa yang dia mau, dia ngelakuin hal jahat ama lu.
+Tapi gua yakin lu ga bego juga pasti, lambat laun juga lu bisa bedain mana yang “Kadal” mana yang kaga.
+Dan ya, sekarang lu udah mau wisuda, selamat buat lu lip, semoga kedepan nya lu selalu dapet yang terbaik buat lu, tapi lu harus inget, kadang yang terbaik belum tentu yang lu mau.
+Tetep jadi diri sendiri, ga perlu pura pura lagi, terima gimana hidup lu, ubah apa yang bisa diubah, syukuri apa yang dikasih.
+
+Selesai………
+
+Kelanjutan season 2 belum ada pengumuman nya.
+
+Wardian Maulana Yusup `;
+
+    // Efek mesin tik
+    let i = 0;
+    function typeWriter() {
+      if (i < text.length) {
+        document.getElementById("typing").innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, 35);
+      }
+    }
+    typeWriter();
+
+    // Musik kontrol
+    const music = document.getElementById("bg-music");
+    const musicBtn = document.getElementById("music-btn");
+
+    musicBtn.addEventListener("click", () => {
+      if (music.paused) {
+        music.play();
+        musicBtn.textContent = "⏸️";
+      } else {
+        music.pause();
+        musicBtn.textContent = "▶️";
+      }
+    });
+
+    // Autoplay fix untuk mobile
+    document.addEventListener("click", () => {
+      if (music.paused) {
+        music.play();
+        musicBtn.textContent = "⏸️";
+      }
+    }, { once: true });
   </script>
 </body>
 </html>
